@@ -6,7 +6,7 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 
 // Load environment variables
-dotenv.config();
+dotenv.config(); 
 
 // Initialize app
 const app = express();
@@ -21,7 +21,7 @@ mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('✅ MongoDB connected successfully'))
   .catch((err) => console.error('❌ MongoDB connection failed:', err));
 
-// Routes
+// Auth Routes
 const authRoutes = require('./routes/authRoutes');
 app.use('/api/auth', authRoutes);
 
