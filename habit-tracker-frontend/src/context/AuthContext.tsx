@@ -3,6 +3,7 @@ import { createContext, useState, useContext, ReactNode, useEffect } from "react
 import { User } from "../types";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
+import useLocalStorageHelper from "@/hooks/useLocalStorageHelper";
 
 interface AuthContextType {
   user: User | null;
@@ -10,7 +11,10 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
+  setUserFromApi: (user: User) => void;
 }
+
+
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -20,11 +24,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  const setUserFromApi = (userData: User) => {
+    setUser(userData);
+    setItem('user', userData);
+  };
+
+  const { setItem, getItem, removeItem } = useLocalStorageHelper();
   // Check if user is already logged in
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
+    const storedUser = getItem("user");
+
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      setUser(storedUser);
     }
     setIsLoading(false);
   }, []);
@@ -34,7 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // For demo purposes, we'll allow any valid email/password
       // In a real app, this would validate against a backend
       if (email && password.length > 3) {
@@ -48,9 +59,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
           }
         };
-        
+
         setUser(userData);
-        localStorage.setItem("user", JSON.stringify(userData));
+        setItem("user", userData);
         toast({
           title: "Login successful",
           description: "Welcome back!",
@@ -75,7 +86,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // For demo purposes, we'll create a new user
       if (name && email && password.length > 3) {
         const userData: User = {
@@ -88,9 +99,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             endDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
           }
         };
-        
+
         setUser(userData);
-        localStorage.setItem("user", JSON.stringify(userData));
+        setItem("user", userData);
         toast({
           title: "Registration successful",
           description: "Welcome to Habit Tracker!",
@@ -112,7 +123,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem("user");
+    removeItem("user");
     navigate("/login");
     toast({
       title: "Logged out",
@@ -127,7 +138,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isLoading,
         login,
         register,
-        logout
+        logout,
+        setUserFromApi,
       }}
     >
       {children}

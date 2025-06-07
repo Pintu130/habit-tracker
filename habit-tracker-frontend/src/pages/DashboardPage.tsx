@@ -29,7 +29,7 @@ export default function DashboardPage() {
               month: 'long', 
               day: 'numeric' 
             })}
-          </p>
+          </p> 
         </div>
         
         {/* Progress section */}

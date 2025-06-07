@@ -14,23 +14,18 @@ import { useToast } from "@/components/ui/use-toast";
 export default function LoginPage() {
   const [login, { isLoading, error, data }] = useLoginMutation();
   const navigate = useNavigate();
-  console.log('--->>data',isLoading);
+  console.log('--->>data', isLoading);
   const { toast } = useToast();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   // const { login, isLoading } = useAuth();
-
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   await login(email, password);
-  // };
-
+  const { setUserFromApi } = useAuth();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const res = await login({ email, password }).unwrap();
       console.log(res);
-      
+      setUserFromApi(res.user);
       setPassword("");
       setEmail("");
       toast({

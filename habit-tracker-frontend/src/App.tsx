@@ -29,33 +29,34 @@ const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   // if (isLoading) {
   //   return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
   // }
-  
+
   if (!user) {
     return <Navigate to="/login" />;
   }
-  
+
   return children;
 };
 
 // Public route component (redirects to dashboard if logged in)
 const PublicRoute = ({ children }: { children: JSX.Element }) => {
   const { user, isLoading } = useAuth();
-  
+
   if (isLoading) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
   }
-  
+
   if (user) {
     return <Navigate to="/dashboard" />;
   }
-  
+
   return children;
 };
 
 const AppRoutes = () => {
   const { user } = useAuth();
   const showNavigation = user; // Only show navigation for authenticated users
-  
+  console.log('showNavigation', showNavigation);
+
   return (
     <>
       {showNavigation && <Navigation />}
@@ -65,14 +66,14 @@ const AppRoutes = () => {
           <Route path="/" element={<PublicRoute><Index /></PublicRoute>} />
           <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
           <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
-          
+
           {/* Protected routes */}
           <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
           <Route path="/calendar" element={<ProtectedRoute><CalendarPage /></ProtectedRoute>} />
           <Route path="/add-task" element={<ProtectedRoute><AddTaskPage /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
           <Route path="/subscription" element={<ProtectedRoute><SubscriptionPage /></ProtectedRoute>} />
-          
+
           {/* 404 route */}
           <Route path="*" element={<NotFound />} />
         </Routes>
