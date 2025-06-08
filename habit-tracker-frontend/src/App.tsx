@@ -19,6 +19,8 @@ import AddTaskPage from "./pages/AddTaskPage";
 import ProfilePage from "./pages/ProfilePage";
 import SubscriptionPage from "./pages/SubscriptionPage";
 import NotFound from "./pages/NotFound";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ResetPassword from "./pages/ResetPassword";
 
 const queryClient = new QueryClient();
 
@@ -66,6 +68,8 @@ const AppRoutes = () => {
           <Route path="/" element={<PublicRoute><Index /></PublicRoute>} />
           <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
           <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
+          <Route path="/forgot-password" element={<PublicRoute><ForgotPasswordPage /></PublicRoute>} />
+          <Route path="/reset-password/:token" element={<PublicRoute><ResetPassword /></PublicRoute>} />
 
           {/* Protected routes */}
           <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />

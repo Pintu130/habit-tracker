@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft } from 'lucide-react';
+import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { useLoginMutation } from '@/lib/authApi';
 import { useToast } from "@/components/ui/use-toast";
 
@@ -14,12 +14,12 @@ import { useToast } from "@/components/ui/use-toast";
 export default function LoginPage() {
   const [login, { isLoading, error, data }] = useLoginMutation();
   const navigate = useNavigate();
-  console.log('--->>data', isLoading);
   const { toast } = useToast();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  // const { login, isLoading } = useAuth();
   const { setUserFromApi } = useAuth();
+  const [showPassword, setShowPassword] = useState(false);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -72,7 +72,7 @@ export default function LoginPage() {
                   required
                 />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 relative">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="password">Password</Label>
                   <Link to="/forgot-password" className="text-sm text-primary hover:underline">
@@ -81,12 +81,24 @@ export default function LoginPage() {
                 </div>
                 <Input
                   id="password"
-                  type="password"
+                  placeholder="********"
+                  type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
+                <div
+                  className="absolute right-3 top-[30px] cursor-pointer"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5 text-gray-500" />
+                  ) : (
+                    <Eye className="h-5 w-5 text-gray-500" />
+                  )}
+                </div>
               </div>
+
             </CardContent>
             <CardFooter className="flex flex-col space-y-4">
               <Button type="submit" className="w-full" disabled={isLoading}>
