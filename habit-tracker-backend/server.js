@@ -1,12 +1,11 @@
-
 // server.js
-const express = require('express');
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
-const cors = require('cors');
+const express = require("express");
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+const cors = require("cors");
 
 // Load environment variables
-dotenv.config(); 
+dotenv.config();
 
 // Initialize app
 const app = express();
@@ -17,17 +16,21 @@ app.use(express.json());
 app.use(cors());
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('✅ MongoDB connected successfully'))
-  .catch((err) => console.error('❌ MongoDB connection failed:', err));
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("✅ MongoDB connected successfully"))
+  .catch((err) => console.error("❌ MongoDB connection failed:", err));
 
 // Auth Routes
-const authRoutes = require('./routes/authRoutes');
-app.use('/api/auth', authRoutes);
+const authRoutes = require("./routes/authRoutes");
+const taskRoutes = require("./routes/taskRoutes");
+
+app.use("/api/auth", authRoutes);
+app.use("/api/tasks", taskRoutes);
 
 // Simple test route
-app.get('/', (req, res) => {
-  res.send('📡 Habit Tracker API is running...');
+app.get("/", (req, res) => {
+  res.send("📡 Habit Tracker API is running...");
 });
 
 // Start server
