@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useResetPasswordMutation } from '@/lib/authApi';
+import { useResetPasswordMutation } from '@/lib/apiEndPoints';
 
 const ResetPassword = () => {
     const { token } = useParams();

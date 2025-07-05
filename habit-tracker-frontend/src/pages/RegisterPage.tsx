@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
-import { useRegisterMutation } from '@/lib/authApi';
+import { useRegisterMutation } from '@/lib/apiEndPoints';
 import { useToast } from '@/hooks/use-toast';
 
 export default function RegisterPage() {

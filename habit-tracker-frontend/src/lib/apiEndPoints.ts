@@ -1,7 +1,15 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-export const authApi = createApi({
-  reducerPath: "authApi",
+interface Task {
+  title: string;
+  category: string;
+  date: string;
+  isRecurring: boolean;
+  reminderTime: string;
+}
+
+export const apiEndPoints = createApi({
+  reducerPath: "apiEndPoints",
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.VITE_BASE_URL,
   }),
@@ -38,6 +46,27 @@ export const authApi = createApi({
     getUsers: builder.query({
       query: () => "auth/users",
     }),
+
+    addTask: builder.mutation({
+      query: ({ token, data }: { token: string; data: Task }) => ({
+        url: "tasks/add",
+        method: "POST",
+        body: data,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }),
+    }),
+
+    getAllTask: builder.mutation({
+      query: ({ token }: { token: string }) => ({
+        url: "tasks/list",
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }),
+    }),
   }),
 });
 
@@ -47,4 +76,6 @@ export const {
   useGetUsersQuery,
   useForgotPasswordMutation,
   useResetPasswordMutation,
-} = authApi;
+  useAddTaskMutation,
+  useGetAllTaskMutation,
+} = apiEndPoints;

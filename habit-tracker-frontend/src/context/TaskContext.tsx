@@ -12,6 +12,7 @@ interface TaskContextType {
   getCompletionPercentage: (date: string) => number;
   getStreak: (date: string) => number;
   getTasksForMonth: (month: number, year: number) => Record<string, Task[]>;
+  setTasksFromAPI: (tasks: Task[]) => void;
 }
 
 const TaskContext = createContext<TaskContextType | undefined>(undefined);
@@ -97,7 +98,7 @@ export function TaskProvider({ children }: { children: ReactNode }) {
       id: `task-${Date.now()}`,
       isCompleted: false,
     };
-    
+
     setTasks(prevTasks => [...prevTasks, newTask]);
     toast({
       title: "Task added",
@@ -128,7 +129,7 @@ export function TaskProvider({ children }: { children: ReactNode }) {
   const getCompletionPercentage = (date: string) => {
     const tasksForDay = getTasksByDate(date);
     if (tasksForDay.length === 0) return 0;
-    
+
     const completedTasks = tasksForDay.filter(task => task.isCompleted).length;
     return Math.round((completedTasks / tasksForDay.length) * 100);
   };
@@ -140,7 +141,7 @@ export function TaskProvider({ children }: { children: ReactNode }) {
 
   const getTasksForMonth = (month: number, year: number) => {
     const result: Record<string, Task[]> = {};
-    
+
     tasks.forEach(task => {
       const taskDate = new Date(task.date);
       if (taskDate.getMonth() === month && taskDate.getFullYear() === year) {
@@ -151,8 +152,12 @@ export function TaskProvider({ children }: { children: ReactNode }) {
         result[dateStr].push(task);
       }
     });
-    
+
     return result;
+  };
+
+  const setTasksFromAPI = (apiTasks: Task[]) => {
+    setTasks(apiTasks);
   };
 
   return (
@@ -165,7 +170,8 @@ export function TaskProvider({ children }: { children: ReactNode }) {
         getTasksByDate,
         getCompletionPercentage,
         getStreak,
-        getTasksForMonth
+        getTasksForMonth,
+        setTasksFromAPI
       }}
     >
       {children}

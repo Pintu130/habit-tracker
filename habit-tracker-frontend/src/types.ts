@@ -27,10 +27,10 @@ export interface StripePaymentIntent {
   clientSecret: string;
 }
 
-export type Category = "work" | "personal" | "health" | "study" | "other";
+export type CategoryValue = "work" | "personal" | "health" | "study" | "other";
 
 export type CategoryOption = {
-  value: Category;
+  value: CategoryValue;
   label: string;
   color: string;
 };

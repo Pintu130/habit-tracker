@@ -1,39 +1,70 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTasks } from '@/context/TaskContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { CATEGORIES, Category } from '@/types';
+import { CATEGORIES, CategoryValue } from '@/types';
+import { useToast } from '@/hooks/use-toast';
+import { useAddTaskMutation } from '@/lib/apiEndPoints';
+import useLocalStorageHelper from '@/hooks/useLocalStorageHelper';
 
 export default function AddTaskPage() {
   const navigate = useNavigate();
-  const { addTask } = useTasks();
-  
+
   const [title, setTitle] = useState('');
-  const [category, setCategory] = useState<Category>('personal');
+  const [category, setCategory] = useState<CategoryValue>('personal');
+
+  console.log('category===>',category);
+  
   const [isRecurring, setIsRecurring] = useState(false);
   const [frequency, setFrequency] = useState<'daily' | 'weekly'>('daily');
   const [reminderTime, setReminderTime] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const { getItem } = useLocalStorageHelper();
+  const { toast } = useToast();
+  const [addTask, { isLoading, error }] = useAddTaskMutation();
 
-  const handleSubmit = (e: React.FormEvent) => {
+console.log('<<========isLoading, error========>>',isLoading, error);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    addTask({
+
+    const storedUser = getItem("user");
+    const token = storedUser?.token;
+    console.log('=====', token);
+
+    const taskData = {
       title,
       category,
-      isRecurring,
-      frequency,
-      reminderTime,
       date,
-    });
-    
-    navigate('/dashboard');
+      isRecurring,
+      reminderTime,
+      frequency: isRecurring ? frequency : undefined,
+    };
+
+
+    try {
+      const rep = await addTask({ token, data: taskData }).unwrap();
+      console.log('rep=========>>', rep);
+
+      toast({
+        title: "Success!",
+        description: rep?.message || "Task added successfully",
+      });
+      navigate('/dashboard');
+    } catch (err) {
+      console.error(err);
+      toast({
+        title: "Error",
+        description: err?.data?.message || "Something went wrong",
+        variant: "destructive",
+      });
+    }
   };
+
 
   return (
     <div className="container max-w-2xl mx-auto p-4 md:p-6 animate-fade-in">
@@ -42,7 +73,7 @@ export default function AddTaskPage() {
           <h1 className="text-2xl font-bold">Add New Task</h1>
           <p className="text-muted-foreground">Create a new task or habit to track</p>
         </div>
-        
+
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4 bg-card p-6 rounded-lg shadow-sm">
             {/* Task Title */}
@@ -56,13 +87,13 @@ export default function AddTaskPage() {
                 required
               />
             </div>
-            
+
             {/* Category */}
             <div className="space-y-2">
               <Label htmlFor="category">Category</Label>
               <Select
                 value={category}
-                onValueChange={(value) => setCategory(value as Category)}
+                onValueChange={(value) => setCategory(value as CategoryValue)}
               >
                 <SelectTrigger id="category">
                   <SelectValue placeholder="Select a category" />
@@ -71,8 +102,8 @@ export default function AddTaskPage() {
                   {CATEGORIES.map((cat) => (
                     <SelectItem key={cat.value} value={cat.value}>
                       <div className="flex items-center gap-2">
-                        <div 
-                          className="w-3 h-3 rounded-full" 
+                        <div
+                          className="w-3 h-3 rounded-full"
                           style={{ backgroundColor: cat.color }}
                         />
                         {cat.label}
@@ -82,7 +113,7 @@ export default function AddTaskPage() {
                 </SelectContent>
               </Select>
             </div>
-            
+
             {/* Due Date */}
             <div className="space-y-2">
               <Label htmlFor="date">Date</Label>
@@ -94,7 +125,7 @@ export default function AddTaskPage() {
                 required
               />
             </div>
-            
+
             {/* Recurring Task */}
             <div className="flex items-center justify-between">
               <div>
@@ -107,7 +138,7 @@ export default function AddTaskPage() {
                 onCheckedChange={setIsRecurring}
               />
             </div>
-            
+
             {/* Frequency (only shown if recurring) */}
             {isRecurring && (
               <div className="space-y-2">
@@ -126,7 +157,7 @@ export default function AddTaskPage() {
                 </Select>
               </div>
             )}
-            
+
             {/* Reminder Time */}
             <div className="space-y-2">
               <Label htmlFor="reminderTime">Reminder Time (Optional)</Label>
@@ -138,12 +169,12 @@ export default function AddTaskPage() {
               />
             </div>
           </div>
-          
+
           {/* Submit Buttons */}
           <div className="flex justify-end gap-4">
-            <Button 
-              type="button" 
-              variant="outline" 
+            <Button
+              type="button"
+              variant="outline"
               onClick={() => navigate(-1)}
             >
               Cancel

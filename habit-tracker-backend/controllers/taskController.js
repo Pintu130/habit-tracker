@@ -3,7 +3,7 @@ const Task = require("../models/Task");
 
 exports.addTask = async (req, res) => {
   try {
-    const { title, category, date, isRecurring, reminderTime } = req.body;
+    const { title, category, date, isRecurring, frequency, reminderTime } = req.body;
     const userId = req.user.id; 
 
     const task = new Task({
@@ -12,6 +12,7 @@ exports.addTask = async (req, res) => {
       date,
       isRecurring,
       reminderTime,
+      frequency,
       user: userId,
     });
 

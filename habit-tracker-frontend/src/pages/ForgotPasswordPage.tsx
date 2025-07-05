@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { useToast } from "@/components/ui/use-toast"; // optional for feedback
-import { useForgotPasswordMutation } from '@/lib/authApi';
+import { useForgotPasswordMutation } from '@/lib/apiEndPoints';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
